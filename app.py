@@ -74,8 +74,18 @@ for i in range(5):
 # Title
 st.title("Pandey Special 💙")
 
-# User input for name
-name = st.text_input("Tera naam kya hai? (default: Pandey)", "Pandey")
+# Name Input Gate
+st.markdown("## 💌 Kya tu hi vo khaas insaan hai?")
+name = st.text_input("Apna naam likho (hint: jo sabse khaas hai)", "")
+
+if name.lower().strip() == "pandey":
+    if st.button("🎁 Unlock Surprise"):
+        st.session_state.show = True
+        st.rerun()
+else:
+    st.button("🎁 Unlock Surprise", disabled=True)
+    st.info("Sirf vohi unlock kar sakta hai... jiska naam Pandey hai 💙")
+
 
 # Music toggle button
 if 'music_playing' not in st.session_state:
