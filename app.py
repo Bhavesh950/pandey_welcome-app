@@ -1,103 +1,143 @@
 import streamlit as st
 import time
-import base64
 
-# ---- Page Config ---- #
-st.set_page_config(page_title="Welcome Back, Pandey!", layout="centered")
+# Page config
+st.set_page_config(page_title="Pandey Special 💙", layout="centered")
 
-# ---- Custom CSS ---- #
+# Custom CSS for styling + animations
 st.markdown("""
     <style>
-    .main {
-        background: linear-gradient(135deg, #fde68a, #fef3c7, #ddd6fe);
-        background-size: 400% 400%;
-        animation: gradientBG 15s ease infinite;
+    body {
+        background: radial-gradient(circle, #fef3c7, #fde68a);
+        color: #4b0082;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    .stButton>button {
+        background-color: #f59e0b;
+        color: white;
         border-radius: 12px;
-        padding: 1rem;
+        font-size: 1.2rem;
+        padding: 0.5rem 1.5rem;
+        transition: background-color 0.3s ease;
     }
-    @keyframes gradientBG {
-        0% { background-position: 0% 50%; }
-        50% { background-position: 100% 50%; }
-        100% { background-position: 0% 50%; }
+    .stButton>button:hover {
+        background-color: #d97706;
     }
-
-    .heart {
-        color: red;
-        font-size: 24px;
-        animation: floatHearts 3s ease-in-out infinite;
+    .message {
+        font-size: 1.5rem;
+        border-right: 3px solid #f59e0b;
+        white-space: nowrap;
+        overflow: hidden;
+        font-weight: 600;
+        margin-bottom: 1rem;
     }
-
-    @keyframes floatHearts {
-        0% { transform: translateY(0); opacity: 1; }
-        50% { transform: translateY(-10px); opacity: 0.8; }
-        100% { transform: translateY(0); opacity: 1; }
-    }
-
-    .note {
-        font-style: italic;
-        color: #333;
-        margin-top: 3rem;
+    .final-message {
+        font-size: 1.3rem;
         text-align: center;
-        font-size: 1.1rem;
+        font-weight: 600;
+        color: #6b21a8;
+        margin-top: 2rem;
     }
-    </style>
+    /* Floating heart animation */
+    .heart-float {
+        position: fixed;
+        bottom: 0;
+        left: 50%;
+        font-size: 2.5rem;
+        color: #ef4444;
+        animation: floatUp 5s ease-in infinite;
+        user-select: none;
+        pointer-events: none;
+        opacity: 0.8;
+        filter: drop-shadow(0 0 2px #f87171);
+    }
+    @keyframes floatUp {
+        0% {
+            transform: translateX(0) translateY(0) rotate(0deg);
+            opacity: 0.8;
+        }
+        100% {
+            transform: translateX(calc(-50vw + 50%)) translateY(-400px) rotate(360deg);
+            opacity: 0;
+        }
+    }
+</style>
 """, unsafe_allow_html=True)
 
-# ---- Animation and Messages ---- #
-def typewriter(message, delay=0.05):
-    output = ""
-    for char in message:
-        output += char
-        st.markdown(f"<h4 style='color:#444;'>{output}</h4>", unsafe_allow_html=True)
-        time.sleep(delay)
-        st.empty()
-    st.markdown(f"<h4 style='color:#444;'>{output}</h4>", unsafe_allow_html=True)
-
-def floating_hearts():
-    st.markdown("""
-        <div class="heart">❤️ ❤️ ❤️ ❤️ ❤️</div>
+# Floating hearts (multiple)
+for i in range(5):
+    left_percent = 30 + i * 10
+    st.markdown(f"""
+        <div class="heart-float" style="left:{left_percent}%; animation-delay: {i*1.5}s;">❤️</div>
     """, unsafe_allow_html=True)
 
-# ---- Main Content ---- #
-if 'replay' not in st.session_state:
-    st.session_state.replay = False
+# Title
+st.title("Pandey Special 💙")
 
-if st.button("▶️ Start the Surprise") or st.session_state.replay:
-    st.session_state.replay = False
-    messages = [
-        "Hey Pandey... Welcome back! 🤗",
-        "Things just weren’t the same without you.",
-        "Your presence brings warmth, joy, and smiles.",
-        "This little surprise is just for you...",
-        "To remind you how much you're valued. ❤️",
-        "Every line here holds a memory.",
-        "Every word is filled with care.",
-        "Ready to begin again — together. 😊"
-    ]
-    for msg in messages:
-        typewriter(msg)
-        time.sleep(1.2)
+# User input for name
+name = st.text_input("Tera naam kya hai? (default: Pandey)", "Pandey")
 
-    floating_hearts()
+# Music toggle button
+if 'music_playing' not in st.session_state:
+    st.session_state.music_playing = False
 
-    st.markdown("""
-        <h2 style='text-align: center; margin-top: 2rem;'>💫 Welcome Back, Pandey! 💫</h2>
-    """, unsafe_allow_html=True)
+def toggle_music():
+    st.session_state.music_playing = not st.session_state.music_playing
 
-    if st.button("🔁 Replay Message"):
-        st.session_state.replay = True
-        st.experimental_rerun()
+if st.button("🎵 Play / Pause Music"):
+    toggle_music()
 
-# ---- Special Note ---- #
-st.markdown("""
-<div class="note">
-❤️ <strong>Special Note</strong><br>
-This surprise was made with care, respect, and pure emotions to celebrate the return of someone special.<br>
-It reflects friendship, creativity, and a sprinkle of magic. 🌈
-</div>
-""", unsafe_allow_html=True)
+audio_url = "https://www.bensound.com/bensound-music/bensound-tomorrow.mp3"
+if st.session_state.music_playing:
+    st.audio(audio_url, format="audio/mp3")
 
-st.markdown("""
----
-<center><sub>Made with ❤️ by Bhavesh for Pandey</sub></center>
-""")
+# Messages (dynamic with name)
+messages = [
+    f"{name}... ek mahine ka intezaar tha... ab tu saamne hai.",
+    f"Tere bina hassi adhuri thi... vibe adhuri thi... din adhure the.",
+    f"Teri yaadon se din guzarte the… par tu khud aayi, toh sab kuch wapas aagaya.",
+    f"Tu meri dost hai... lekin usse bhi zyada meri sukoon wali feeling hai.",
+    f"Missed You, {name}! 💙"
+]
+
+# Session state init
+if 'msg_index' not in st.session_state:
+    st.session_state.msg_index = 0
+if 'show' not in st.session_state:
+    st.session_state.show = False
+
+# Typing effect with fade-in like animation
+def type_writer_effect(msg):
+    typed = ""
+    placeholder = st.empty()
+    for char in msg:
+        typed += char
+        placeholder.markdown(f"<div class='message'>{typed}</div>", unsafe_allow_html=True)
+        time.sleep(0.05)
+
+# Images for slideshow after messages
+slide_images = ["pandey_card.png", "pandey_heart.png", "pandey_star.png"]  # You can replace with your images
+
+# Main Logic
+if not st.session_state.show:
+    if st.button("Tap to Begin…"):
+        st.session_state.show = True
+        st.rerun()
+else:
+    if st.session_state.msg_index < len(messages):
+        type_writer_effect(messages[st.session_state.msg_index])
+        time.sleep(2.5)
+        st.session_state.msg_index += 1
+        st.rerun()
+    else:
+        # Show slideshow of images with delay
+        for img in slide_images:
+            st.image(img, width=320)
+            time.sleep(2)
+        # Final emotional message
+        st.markdown(f"""
+            <div class='final-message'>
+                Tu wapas aayi... toh lagta hai sab kuch wapas apna sa ho gaya.<br>
+                Bas tu hamesha aise hi muskurati rehna, {name}. You're irreplaceable. 💙
+            </div>
+        """, unsafe_allow_html=True)
